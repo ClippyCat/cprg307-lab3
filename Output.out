@@ -1,0 +1,37 @@
+SQL> 
+SQL> 
+SQL> -- Create constants for hard-coded values
+SQL> DECLARE
+  2    PRESIDENT CONSTANT NUMBER(7, 2) := 5000;
+  3    REDUCTION CONSTANT NUMBER(3, 2) := 0.25;
+  4    MIN_SALARY CONSTANT NUMBER(7, 2) := 100;
+  5    SALARY_INCREASE CONSTANT NUMBER(3, 2) := 0.10;
+  6  
+  7    -- Variables for calculations
+  8    avg_salary NUMBER(7, 2);
+  9  BEGIN
+ 10    -- Calculate the average salary after applying Rule 1
+ 11    SELECT AVG(CASE WHEN SAL > PRESIDENT THEN PRESIDENT * REDUCTION ELSE SAL END) INTO avg_salary FROM EMP;
+ 12  
+ 13    -- Update salaries based on Rule 1
+ 14    UPDATE EMP
+ 15    SET SAL = CASE WHEN SAL > PRESIDENT THEN PRESIDENT * REDUCTION ELSE SAL END
+ 16    WHERE EMPNO != 7839; -- Exclude the president
+ 17  
+ 18    -- Update salaries based on Rule 2
+ 19    UPDATE EMP
+ 20    SET SAL = SAL * (1 + SALARY_INCREASE)
+ 21    WHERE SAL < MIN_SALARY AND avg_salary > SAL;
+ 22  
+ 23    -- Display president's salary and average salary
+ 24    DBMS_OUTPUT.PUT_LINE('President''s Salary: ' || PRESIDENT);
+ 25    DBMS_OUTPUT.PUT_LINE('Average Salary: ' || avg_salary);
+ 26  
+ 27    COMMIT;
+ 28  END;
+ 29  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SPOOL OFF
